@@ -14,16 +14,17 @@
     "@ant-design/cssinjs": "1.17.2",
     "@prisma/client": "5.4.2",
     "antd": "5.10.1",
+    "classnames": "^2.5.0",
     "dayjs": "1.11.10",
     "lodash": "4.17.21",
     "next": "14.0.4",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-family-tree": "3.2.0",
-    "styled-components": "6.1.0",
     "uuid": "9.0.0"
   },
   "devDependencies": {
+    "@types/classnames": "^2.3.1",
     "@types/lodash": "4.14.200",
     "@types/node": "20.4.1",
     "@types/react": "18.2.14",

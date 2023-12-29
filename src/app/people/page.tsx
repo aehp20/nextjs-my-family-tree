@@ -1,15 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import {
-  Button,
-  Flex,
-  Typography,
-  Table,
-  Space,
-  Popconfirm,
-  message,
-} from 'antd'
+import { Button, Typography, Table, Popconfirm, message } from 'antd'
 import { TablePaginationConfig } from 'antd/es/table/interface'
 import dayjs from 'dayjs'
 import Link from 'next/link'
@@ -121,27 +113,27 @@ function People() {
 
   return (
     <div>
-      <Flex justify="space-between">
+      <div className="mt-2">
         <Title level={4}>People {totalPages ? `(${totalPages})` : ''}</Title>
-        <Space>
-          {selectedPeopleKeys.length > 0 && (
-            <Popconfirm
-              title="Delete people"
-              description="Are you sure to delete the selected item(s)?"
-              onConfirm={confirm}
-              okText="Yes"
-              cancelText="No"
-            >
-              <Button type="primary" danger>
-                Delete ({selectedPeopleKeys.length})
-              </Button>
-            </Popconfirm>
-          )}
-          <Button type="primary" href="/people/add">
-            Add
-          </Button>
-        </Space>
-      </Flex>
+      </div>
+      <div className="flex justify-between mb-2">
+        <Button href="/people/add" type="primary">
+          Add
+        </Button>
+        {selectedPeopleKeys.length > 0 && (
+          <Popconfirm
+            title="Delete people"
+            description="Are you sure to delete the selected item(s)?"
+            onConfirm={confirm}
+            okText="Yes"
+            cancelText="No"
+          >
+            <Button type="primary" danger>
+              Delete ({selectedPeopleKeys.length})
+            </Button>
+          </Popconfirm>
+        )}
+      </div>
       <div>
         {people.length > 0 ? (
           <Table
@@ -153,7 +145,7 @@ function People() {
             columns={columns}
             dataSource={people}
             pagination={{
-              position: ['none', 'bottomCenter'],
+              position: ['bottomCenter'],
               defaultCurrent: currentPage,
               total: totalPages,
             }}

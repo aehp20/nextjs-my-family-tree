@@ -1,5 +1,5 @@
 import { memo, useCallback } from 'react'
-import styled, { css } from 'styled-components'
+import classNames from 'classnames'
 import type { FamilyNodeProps } from '@/app/tree-families/types'
 
 export const FamilyNode = memo(function FamilyNode({
@@ -16,59 +16,29 @@ export const FamilyNode = memo(function FamilyNode({
   )
 
   return (
-    <DivRoot style={style}>
-      <DivInner $isRoot={isRoot} onClick={clickHandler}>
-        <DivId>{node.label}</DivId>
-      </DivInner>
-      {node.hasSubTree && <DivSub onClick={clickSubHandler} />}
-    </DivRoot>
+    <div className="flex absolute p-[10px]" style={style}>
+      <div
+        role="button"
+        onKeyDown={clickHandler}
+        className={classNames(
+          'flex flex-[1] items-center justify-center border-solid border-2 border-black/20 rounded-lg overflow-hidden cursor-pointer bg-[#a4ecff] p-1',
+          'hover:border-black/80 hover:bg-[#a4d5ff]',
+          { 'text-black/80': isRoot }
+        )}
+        onClick={clickHandler}
+        tabIndex={0}
+      >
+        <div className="text-xs leading-none opacity-70">{node.label}</div>
+      </div>
+      {node.hasSubTree && (
+        <div
+          role="button"
+          className="absolute top-[6px] right-[18px] w-[18px] h-[10px] border-solid border-1 border-black/20 rounded-lg cursor-pointer bg-[#3a8fba]"
+          onClick={clickSubHandler}
+          onKeyDown={clickSubHandler}
+          tabIndex={0}
+        />
+      )}
+    </div>
   )
 })
-
-const DivSub = styled.div`
-  position: absolute;
-  top: 6px;
-  right: 18px;
-  width: 18px;
-  height: 10px;
-  border: 1px solid rgba(0, 0, 0, 0.2);
-  border-radius: 4px 0;
-  background: #3a8fba;
-  cursor: pointer;
-`
-
-const DivRoot = styled.div`
-  position: absolute;
-  display: flex;
-  padding: 10px;
-`
-
-const DivInner = styled.div`
-  display: flex;
-  flex: 1;
-  align-items: center;
-  justify-content: center;
-  border: 2px solid rgba(0, 0, 0, 0.2);
-  border-radius: 8px;
-  overflow: hidden;
-  cursor: pointer;
-  background: #a4ecff;
-  padding: 4px;
-
-  ${(props: { $isRoot: boolean }) =>
-    props.$isRoot &&
-    css`
-      border-color: rgba(0, 0, 0, 0.8);
-    `}
-
-  &:hover {
-    border-color: rgba(0, 0, 0, 0.8);
-    background: #a4d5ff;
-  }
-`
-
-const DivId = styled.div`
-  font-size: 14px;
-  line-height: 1;
-  opacity: 0.7;
-`

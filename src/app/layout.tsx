@@ -1,10 +1,10 @@
-import { Pacifico } from 'next/font/google'
+import { Work_Sans } from 'next/font/google'
 
 import { RootStyleRegistry } from './components/RootStyleRegistry'
-import StyledComponentsRegistry from '@/app/components/StyledComponentsRegistry'
-import GlobalStyles from '@/app//styles/GlobalStyles'
 
 import Navbar from './components/Navbar'
+
+import './index.css'
 
 export const metadata = {
   title: 'My family',
@@ -12,7 +12,7 @@ export const metadata = {
   keywords: 'family, tree',
 }
 
-const pacifico = Pacifico({
+const font = Work_Sans({
   weight: ['400'],
   style: ['normal'],
   subsets: ['latin'],
@@ -25,14 +25,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={pacifico.className}>
-        <StyledComponentsRegistry>
-          <GlobalStyles />
-          <RootStyleRegistry>
-            <Navbar />
-            {children}
-          </RootStyleRegistry>
-        </StyledComponentsRegistry>
+      <body className={font.className}>
+        <RootStyleRegistry>
+          <Navbar />
+          {children}
+        </RootStyleRegistry>
       </body>
     </html>
   )
