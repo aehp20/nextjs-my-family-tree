@@ -18,6 +18,7 @@ model Person {
   deleted_at       DateTime? @db.Date
   birthday         String?   @db.VarChar
   family_id        String?   @db.Uuid
+  photo            String?   @db.VarChar
   father           Family[]  @relation("father")
   mother           Family[]  @relation("mother")
   family           Family?   @relation(fields: [family_id], references: [family_id])
