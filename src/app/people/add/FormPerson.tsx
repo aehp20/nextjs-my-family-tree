@@ -12,6 +12,7 @@ import {
   Col,
   Row,
   Upload,
+  Modal,
 } from 'antd'
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons'
 import type { UploadChangeParam } from 'antd/es/upload'
@@ -76,7 +77,10 @@ function FormPerson({
   onSuccess?: (person: Person) => void
 }) {
   const [loading, setLoading] = useState(false)
-  const [imageUrl, setImageUrl] = useState<string>()
+  const [previewOpen, setPreviewOpen] = useState(false)
+  const [previewImage, setPreviewImage] = useState('')
+  const [previewTitle, setPreviewTitle] = useState('')
+  const [fileList, setFileList] = useState<UploadFile[]>([])
 
   const [form] = Form.useForm()
 
@@ -140,17 +144,46 @@ function FormPerson({
   const handleChangePhoto: UploadProps['onChange'] = (
     info: UploadChangeParam<UploadFile>
   ) => {
-    if (info.file.status === 'uploading') {
+    const { status, uid, name, percent } = info.file
+
+    if (status === 'uploading') {
       setLoading(true)
+      setFileList([
+        {
+          uid,
+          name,
+          status,
+          percent,
+        },
+      ])
       return
     }
     if (info.file.status === 'done') {
-      getBase64(info.file.originFileObj as RcFile, (url) => {
+      getBase64(info.file.originFileObj as RcFile, (data) => {
         setLoading(false)
-        setImageUrl(url)
+        setFileList([
+          {
+            uid: `${1}`,
+            name: `${1}`,
+            status: 'done',
+            url: data,
+          },
+        ])
       })
     }
   }
+
+  const handlePreview = async (file: UploadFile) => {
+    setPreviewImage(file.url || (file.preview as string))
+    setPreviewOpen(true)
+    setPreviewTitle(form.getFieldValue('first_name'))
+  }
+
+  const handleRemove = async (file: UploadFile) => {
+    setFileList([])
+  }
+
+  const handleCancel = () => setPreviewOpen(false)
 
   const uploadButton = (
     <div>
@@ -169,7 +202,14 @@ function FormPerson({
       })
       fetchPersonPhoto(params.id).then((data) => {
         if (data) {
-          setImageUrl(data)
+          setFileList([
+            {
+              uid: `${params.id}`,
+              name: `${params.id}`,
+              status: 'done',
+              url: data,
+            },
+          ])
         }
       })
     }
@@ -219,23 +259,26 @@ function FormPerson({
             <Upload
               name="photo"
               listType="picture-circle"
-              showUploadList={false}
+              fileList={fileList}
               beforeUpload={beforeUpload}
+              onPreview={handlePreview}
+              onRemove={handleRemove}
               onChange={handleChangePhoto}
               customRequest={handleCustomRequestPhoto}
             >
-              {imageUrl ? (
-                <Image
-                  src={imageUrl}
-                  alt="Picture of the user"
-                  width={200}
-                  height={200}
-                />
-              ) : (
-                uploadButton
-              )}
+              {fileList.length > 0 ? null : uploadButton}
             </Upload>
           </Form.Item>
+          <Modal
+            open={previewOpen}
+            title={previewTitle}
+            footer={null}
+            onCancel={handleCancel}
+          >
+            <div className="flex justify-center">
+              <Image src={previewImage} alt="Photo" width={200} height={200} />
+            </div>
+          </Modal>
         </Col>
       </Row>
       <Row>

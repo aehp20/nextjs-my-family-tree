@@ -42,7 +42,6 @@ export async function PUT(
     },
   })
 
-  // TODO REMOVE PHOTO IF IT EXISTS AND IF IT IS NULL
   if (photo instanceof Blob) {
     try {
       const buffer = Buffer.from(await photo.arrayBuffer())
@@ -64,6 +63,11 @@ export async function PUT(
       if (error instanceof Error) return NextResponse.json(error.message)
       return NextResponse.json(String(error))
     }
+  }
+
+  if (photo === 'undefined') {
+    // TODO REMOVE PHOTO IF IT EXISTS AND IF IT IS NULL
+    return NextResponse.json({ success: true })
   }
 }
 
