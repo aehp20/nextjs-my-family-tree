@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { Button, Typography, Table, Popconfirm, message } from 'antd'
+import { ManOutlined, WomanOutlined, LineOutlined } from '@ant-design/icons'
 import { TablePaginationConfig } from 'antd/es/table/interface'
 import dayjs from 'dayjs'
 import Link from 'next/link'
@@ -27,7 +28,14 @@ const columns = [
   {
     title: 'Gender',
     dataIndex: 'gender',
-    render: (text: string) => (text === 'm' ? 'Man' : 'Woman'),
+    render: (text: string) =>
+      text === 'm' ? (
+        <ManOutlined />
+      ) : text === 'w' ? (
+        <WomanOutlined />
+      ) : (
+        <LineOutlined />
+      ),
   },
   {
     title: 'Birthday',

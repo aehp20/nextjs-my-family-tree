@@ -69,12 +69,13 @@ export async function POST(request: NextRequest) {
           photo: filename,
         },
       })
-      return NextResponse.json({ success: true })
     } catch (error) {
       if (error instanceof Error) return NextResponse.json(error.message)
       return NextResponse.json(String(error))
     }
   }
+
+  return NextResponse.json({ success: true })
 }
 
 export async function DELETE(request: NextRequest) {

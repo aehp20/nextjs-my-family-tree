@@ -179,7 +179,7 @@ function FormPerson({
     setPreviewTitle(form.getFieldValue('first_name'))
   }
 
-  const handleRemove = async (file: UploadFile) => {
+  const handleRemove = async () => {
     setFileList([])
   }
 
