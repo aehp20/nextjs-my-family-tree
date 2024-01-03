@@ -1,9 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import path from 'path'
 import { writeFile } from 'fs/promises'
+import fs from 'fs'
 
 import { prisma } from '@/app/libs/prisma'
 import { getFileExtension } from '@/app/utils'
+
+const PATH_FOLDER_PHOTOS = 'private/uploads/photos/'
 
 export async function GET(
   request: NextRequest,
@@ -49,7 +52,7 @@ export async function PUT(
         photo.name
       )}`
       await writeFile(
-        path.join(process.cwd(), 'private/uploads/photos/' + filename),
+        path.join(process.cwd(), PATH_FOLDER_PHOTOS + filename),
         buffer
       )
       await prisma.person.update({
@@ -60,13 +63,43 @@ export async function PUT(
       })
       return NextResponse.json({ success: true })
     } catch (error) {
-      if (error instanceof Error) return NextResponse.json(error.message)
+      if (error instanceof Error) {
+        return NextResponse.json(error.message)
+      }
       return NextResponse.json(String(error))
     }
   }
 
   if (photo === 'undefined') {
-    // TODO REMOVE PHOTO IF IT EXISTS AND IF IT IS NULL
+    const person = await prisma.person.findUnique({
+      where: { person_id: params.id },
+    })
+
+    if (person?.photo) {
+      const pathPhoto = path.join(
+        process.cwd(),
+        PATH_FOLDER_PHOTOS + person.photo
+      )
+      const fileExists = fs.existsSync(pathPhoto)
+
+      if (fileExists) {
+        fs.unlink(pathPhoto, async (error) => {
+          if (error instanceof Error) {
+            return NextResponse.json(error.message)
+          }
+
+          await prisma.person.update({
+            where: { person_id: updatedPerson.person_id },
+            data: {
+              photo: null,
+            },
+          })
+
+          console.log('File deleted successfully')
+        })
+      }
+    }
+
     return NextResponse.json({ success: true })
   }
 }

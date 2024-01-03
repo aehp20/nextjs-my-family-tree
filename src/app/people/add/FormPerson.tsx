@@ -199,21 +199,24 @@ function FormPerson({
           ...data,
           birthday: data.birthday ? dayjs(data.birthday) : null,
         })
-      })
-      fetchPersonPhoto(params.id).then((data) => {
-        if (data) {
-          setFileList([
-            {
-              uid: `${params.id}`,
-              name: `${params.id}`,
-              status: 'done',
-              url: data,
-            },
-          ])
+
+        if (data.photo) {
+          fetchPersonPhoto(params.id).then((data) => {
+            if (data) {
+              setFileList([
+                {
+                  uid: `${params.id}`,
+                  name: `${params.id}`,
+                  status: 'done',
+                  url: data,
+                },
+              ])
+            }
+          })
         }
       })
     }
-  }, [params])
+  }, [])
 
   return (
     <Form
