@@ -5,8 +5,7 @@ import fs from 'fs'
 
 import { prisma } from '@/app/libs/prisma'
 import { getFileExtension } from '@/app/utils'
-
-const PATH_FOLDER_PHOTOS = 'private/uploads/photos/'
+import { PATH_FOLDER_PHOTOS } from '@/app/constants'
 
 export async function GET(
   request: NextRequest,

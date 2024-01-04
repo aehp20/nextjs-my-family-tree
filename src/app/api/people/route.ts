@@ -1,9 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import path from 'path'
 import { writeFile } from 'fs/promises'
+import fs from 'fs'
 
 import { prisma } from '@/app/libs/prisma'
 import { getFileExtension } from '@/app/utils'
+import { PATH_FOLDER_PHOTOS } from '@/app/constants'
 
 export async function GET(request: NextRequest) {
   const page = Number(request.nextUrl.searchParams.get('page'))
@@ -81,10 +83,36 @@ export async function POST(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
   try {
     const ids = request.nextUrl.searchParams.getAll('id')
-    const result = await prisma.person.deleteMany({
+    const people = await prisma.person.findMany({
+      where: { person_id: { in: ids } },
+      select: {
+        person_id: true,
+        photo: true,
+      },
+    })
+    const { count } = await prisma.person.deleteMany({
       where: { person_id: { in: ids } },
     })
-    return NextResponse.json(result)
+    if (count > 0) {
+      people.forEach((person) => {
+        if (person.photo) {
+          const pathPhoto = path.join(
+            process.cwd(),
+            PATH_FOLDER_PHOTOS + person.photo
+          )
+          const fileExists = fs.existsSync(pathPhoto)
+          if (fileExists) {
+            fs.unlink(pathPhoto, async (error) => {
+              if (error instanceof Error) {
+                return NextResponse.json(error.message)
+              }
+              console.log('File deleted successfully')
+            })
+          }
+        }
+      })
+    }
+    return NextResponse.json({ success: true })
   } catch (error: unknown) {
     if (error instanceof Error) return NextResponse.json(error.message)
     return NextResponse.json(String(error))
