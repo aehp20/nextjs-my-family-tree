@@ -213,16 +213,18 @@ function People() {
         setTimeout(() => searchInput.current?.select(), 100)
       }
     },
-    render: (text) =>
+    render: (text: string, { person_id }: { person_id: string }) =>
       searchedColumn === dataIndex ? (
-        <Highlighter
-          highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
-          searchWords={[searchText]}
-          autoEscape
-          textToHighlight={text ? text.toString() : ''}
-        />
+        <Link href={`/people/${person_id}`}>
+          <Highlighter
+            highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
+            searchWords={[searchText]}
+            autoEscape
+            textToHighlight={text ? text.toString() : ''}
+          />
+        </Link>
       ) : (
-        text
+        <Link href={`/people/${person_id}`}>{text}</Link>
       ),
   })
 
@@ -230,9 +232,6 @@ function People() {
     {
       title: 'First name',
       dataIndex: 'first_name',
-      render: (text: string, { person_id }: { person_id: string }) => (
-        <Link href={`/people/${person_id}`}>{text}</Link>
-      ),
       ...getColumnSearchProps('first_name'),
     },
     {
