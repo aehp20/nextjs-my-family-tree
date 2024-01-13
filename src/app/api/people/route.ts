@@ -10,10 +10,24 @@ import { PATH_FOLDER_PHOTOS } from '@/app/constants'
 export async function GET(request: NextRequest) {
   const page = Number(request.nextUrl.searchParams.get('page'))
   const limit = Number(request.nextUrl.searchParams.get('limit'))
+  const query = request.nextUrl.searchParams.get('query')
+  const queryObject = query ? JSON.parse(query) : undefined
+  let where: { [key: string]: { contains: string; mode: string } } = {}
+
+  if (queryObject) {
+    where = {}
+    Object.keys(queryObject).forEach((key) => {
+      where[key] = {
+        contains: queryObject[key],
+        mode: 'insensitive',
+      }
+    })
+  }
   const count = await prisma.person.aggregate({
     _count: {
       person_id: true,
     },
+    where,
   })
   const people = await prisma.person.findMany({
     skip: (page - 1) * limit,
@@ -30,6 +44,7 @@ export async function GET(request: NextRequest) {
     orderBy: {
       first_name: 'asc',
     },
+    where,
   })
   return NextResponse.json({ items: people, total: count._count.person_id })
 }

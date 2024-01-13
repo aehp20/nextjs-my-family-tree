@@ -37,10 +37,14 @@ interface DataType {
 
 type DataIndex = keyof DataType
 
-async function fetchPeople(currentPage: number, currentPageSize: number) {
-  const response = await fetch(
-    `/api/people?page=${currentPage}&limit=${currentPageSize}`
-  )
+async function fetchPeople(
+  currentPage: number,
+  currentPageSize: number,
+  query?: string
+) {
+  const urlBase = `/api/people?page=${currentPage}&limit=${currentPageSize}`
+  const url = query ? `${urlBase}&query=${query}` : urlBase
+  const response = await fetch(url)
   const people = await response.json()
 
   return people
@@ -64,9 +68,9 @@ function People() {
   }
 
   const fetchData = useCallback(
-    (currentPage: number, currentPageSize: number) => {
+    (currentPage: number, currentPageSize: number, query?: string) => {
       setIsFetching(true)
-      fetchPeople(currentPage, currentPageSize)
+      fetchPeople(currentPage, currentPageSize, query)
         .then(({ items, total }) => {
           setPeople(
             items.map((person: { person_id: string }) => ({
@@ -120,7 +124,11 @@ function People() {
     setSearchText(selectedKeys[0])
     setSearchedColumn(dataIndex)
     // Filter on Database
-    // fetchPeople
+    fetchData(
+      1,
+      currentPageSize,
+      JSON.stringify({ [dataIndex]: selectedKeys[0] })
+    )
   }
 
   const handleReset = (
@@ -132,8 +140,8 @@ function People() {
     confirm()
     setSearchText('')
     setSearchedColumn(dataIndex)
-    // Clean flter on Database
-    // fetchPeople
+    // Filter on Database
+    fetchData(1, currentPageSize)
   }
 
   const getColumnSearchProps = (
