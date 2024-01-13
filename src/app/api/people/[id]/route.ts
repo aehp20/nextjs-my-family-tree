@@ -103,17 +103,20 @@ export async function PUT(
   }
 }
 
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
-  try {
-    const person = await prisma.person.delete({
-      where: { person_id: params.id },
-    })
-    return NextResponse.json(person)
-  } catch (error: unknown) {
-    if (error instanceof Error) return NextResponse.json(error.message)
-    return NextResponse.json(String(error))
-  }
-}
+// ----------------------------------------------------------------
+// Not used, it was created just as a template to delete
+// ----------------------------------------------------------------
+// export async function DELETE(
+//   request: NextRequest,
+//   { params }: { params: { id: string } }
+// ) {
+//   try {
+//     const person = await prisma.person.delete({
+//       where: { person_id: params.id },
+//     })
+//     return NextResponse.json(person)
+//   } catch (error: unknown) {
+//     if (error instanceof Error) return NextResponse.json(error.message)
+//     return NextResponse.json(String(error))
+//   }
+// }
