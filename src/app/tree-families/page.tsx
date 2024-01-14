@@ -2,6 +2,7 @@
 
 import ReactFamilyTree from 'react-family-tree'
 import { useCallback, useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 
 import { fetchFamilies } from '@/app/families/utils'
 import { NODE_WIDTH, NODE_HEIGHT } from '@/app/tree-families/constants'
@@ -14,6 +15,7 @@ function TreeFamilies() {
   const [nodePeople, setNodePeople] = useState<NodePerson[]>([])
   const [isFetching, setIsFetching] = useState(false)
   const [rootId, setRootId] = useState<string>()
+  const router = useRouter()
 
   const fetchData = useCallback(
     (currentPage: number, currentPageSize: number) => {
@@ -48,7 +50,7 @@ function TreeFamilies() {
               key={node.id}
               node={node}
               isRoot={node.id === rootId}
-              onClick={() => console.log('use setSelectId to display details')}
+              onClick={(peopleId: string) => router.push(`/people/${peopleId}`)}
               onSubClick={setRootId}
               style={getNodeStyle(node)}
             />

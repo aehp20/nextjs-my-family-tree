@@ -1,6 +1,9 @@
-import { memo, useCallback } from 'react'
+import { memo, useCallback, useState } from 'react'
 import classNames from 'classnames'
+import { Tooltip } from 'antd'
+import Image from 'next/image'
 import type { FamilyNodeProps } from '@/app/tree-families/types'
+import { fetchPersonPhoto } from '@/app/people/utils'
 
 export const FamilyNode = memo(function FamilyNode({
   node,
@@ -9,6 +12,13 @@ export const FamilyNode = memo(function FamilyNode({
   onSubClick,
   style,
 }: FamilyNodeProps) {
+  const [photoUrl, setPhotoUrl] = useState<string>()
+
+  fetchPersonPhoto(node.id).then((data) => {
+    if (data) {
+      setPhotoUrl(data)
+    }
+  })
   const clickHandler = useCallback(() => onClick(node.id), [node.id, onClick])
   const clickSubHandler = useCallback(
     () => onSubClick(node.id),
@@ -28,7 +38,19 @@ export const FamilyNode = memo(function FamilyNode({
         onClick={clickHandler}
         tabIndex={0}
       >
-        <div className="text-xs leading-none opacity-70">{node.label}</div>
+        {photoUrl ? (
+          <Tooltip title={`${node.label}`}>
+            <Image
+              src={`${photoUrl}`}
+              alt={`${photoUrl}`}
+              width={100}
+              height={100}
+              className="rounded-[50%]"
+            />
+          </Tooltip>
+        ) : (
+          <div className="text-xs">{node.label}</div>
+        )}
       </div>
       {node.hasSubTree && (
         <div

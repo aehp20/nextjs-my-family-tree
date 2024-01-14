@@ -21,6 +21,7 @@ import { UploadRequestOption } from 'rc-upload/lib/interface'
 import dayjs, { Dayjs } from 'dayjs'
 import Image from 'next/image'
 
+import { fetchPersonPhoto } from '../utils'
 import type { Person } from '../types'
 
 async function fetchPerson(id: string) {
@@ -28,27 +29,6 @@ async function fetchPerson(id: string) {
   const person = await response.json()
 
   return person
-}
-
-async function fetchPersonPhoto(id: string) {
-  const response = await fetch(`/api/people/${id}/photo`)
-
-  if (!response.ok) {
-    const { message } = await response.clone().json()
-
-    if (message === 'Photo not found') {
-      return null
-    }
-
-    throw new Error('HTTP error ' + response.status)
-  }
-
-  const blob = await response.clone().blob()
-  const text = await blob.arrayBuffer()
-  const encoded = Buffer.from(text).toString('base64')
-  const imageBase64 = `data:${blob.type};base64, ${encoded}`
-
-  return imageBase64
 }
 
 const getBase64 = (img: RcFile, callback: (url: string) => void) => {
